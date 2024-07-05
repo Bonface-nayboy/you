@@ -1,0 +1,60 @@
+/* print.css */
+
+/* Reset some styles for printing */
+body {
+    font-family: Arial, sans-serif; /* Use a standard font for printing */
+  }
+  
+  .receipt-container {
+    max-width: 40%; /* Expand to full width for printing */
+    margin: 0; /* Remove margins for printing */
+    padding: 0; /* Remove padding for printing */
+    border: none; /* No border for printing */
+    background-color: #fff; /* White background for printing */
+  }
+  
+  /* Adjust heading size for printing */
+  .receipt-container .MuiTypography-h5 {
+    font-size: 1.2rem;
+  }
+  
+  /* Adjust date and time size for printing */
+  .receipt-container .MuiTypography-subtitle1 {
+    font-size: 0.9rem;
+  }
+  
+  /* Adjust table styles for printing */
+  .receipt-container .MuiTable-root {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .receipt-container .MuiTableCell-root {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ccc;
+  }
+  
+  .receipt-container .MuiTableHead-root {
+    background-color: #f0f0f0;
+  }
+  
+  .receipt-container .MuiTableBody-root {
+    width: 100%;
+  }
+  
+  /* Hide barcode section for printing */
+  .receipt-container .barcode-container {
+    display: none;
+  }
+  
+  /* Adjust total amount section for printing */
+  .receipt-container .total-amount {
+    text-align: right;
+  }
+  
+  /* Hide print button for printing */
+  .receipt-container .print-button {
+    display: none;
+  }
+  

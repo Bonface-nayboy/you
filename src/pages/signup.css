@@ -1,0 +1,23 @@
+body{
+    
+    background-color: unset;
+}
+.sign{
+    margin-bottom:0%;
+    
+}
+
+.signup{
+    
+}
+
+
+.login {
+    margin-left: 40px; /* Adjust this margin according to your preference */
+}
+
+.login button{
+    border-radius:100%;
+}
+
+

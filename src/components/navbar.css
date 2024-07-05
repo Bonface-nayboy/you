@@ -1,0 +1,30 @@
+.navbar {
+    background-color:#0056b3;
+    color: white;
+    padding: 10px;
+    border-radius:5px;
+    
+  }
+  
+  .links {
+    display: flex;
+    align-items: center;
+    margin-left:80%;
+  }
+  
+  .links a {
+    text-decoration: none;
+    color: white;
+    margin-right: 15px;
+    font-weight: bold;
+
+  }
+  
+  .links a:hover {
+    text-decoration: underline;
+    background-color:white;
+    color:orange;
+    font-weight: bold;
+    
+  }
+  

@@ -1,0 +1,94 @@
+/* searchbar.css */
+/* searchbar.css */
+
+/* Styles for the Searchbar container */
+
+
+/* Styles for the search input */
+.Searchbar input[type="text"] {
+    width: 50%;
+    padding: 30px;
+    margin-bottom: 20px;
+    /* Increased margin-bottom for spacing */
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 40px;
+    font-size: 16px;
+}
+
+/* Styles for the product container */
+.Searchbar .product {
+    display: block;
+    /* Changed to flex to align with cart item style */
+    align-items: center;
+    /* Align items vertically */
+    padding: 10px;
+    margin-left: 10%;
+    background-color: #e9e7e7;
+    border: 1px solid #e3e0e0;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 10px;
+    /* Increased margin-bottom for spacing */
+    width: 100%;
+    /* Applied a width similar to cartItem */
+}
+
+.Searchbar .product:hover {
+    transform: translateY(-5px);
+}
+
+/* Styles for product image */
+.Searchbar .prod img {
+    width: 220px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    /* Added margin-right for spacing */
+  
+    border-radius: 8px;
+    display: block;
+    margin-left: 20px;
+}
+
+
+
+
+.prod p{
+    margin-left: 10px;
+     font-size:20px;
+}
+/* Styles for product description */
+.descript{
+    padding: 10px;
+ margin-left: 20px;
+}
+
+.descript p {
+    margin: 0px 0px;
+    color: blueviolet;
+}
+
+.descript b {
+    font-size: 1.3rem;
+    color: black;
+}
+
+/* Styles for product name */
+.product p {
+    margin-left: 100%;
+
+    margin: 5px 0;
+
+}
+
+/* Styles for product price */
+.description p {
+    font-weight: bold;
+    margin-left: 0%;
+    color: red;
+    margin: 5px 0;
+    /* Adjusted margin for spacing */
+}
+

@@ -1,0 +1,104 @@
+.cart {
+    max-width: 1000px;
+    margin: 0px 41px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.cartItems {
+    margin-top: 20px;
+}
+
+.cartItem {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10%;
+    width: 60%;
+}
+
+.cartItem img {
+    display: block;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 20px;
+    margin-bottom: 10%;
+}
+
+.cartItem .description {
+    flex: 1;
+}
+
+.cartItem p {
+    display: block;
+    margin: 5px 0;
+}
+
+.cartItem .countHandler {
+    display: flex;
+    align-items: center;
+}
+
+
+.cartItem .countHandler input {
+    display: block; 
+    width: 40px;
+    text-align: center;
+    font-size: 16px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+
+
+.Cart {
+    margin-left:39.5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    background-color: whitesmoke;
+  }
+  
+  .Cart .Card {
+    margin-bottom: 10px;
+  }
+  
+  .Cart .Card .CardContent {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .Cart .Card .CardContent .Button {
+    margin-top: 5px;
+  }
+  
+
+@media (max-width: 768px) {
+    .cart {
+        padding: 10px;
+    }
+
+    .cartItem {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cartItem img {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+
+

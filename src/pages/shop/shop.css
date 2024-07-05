@@ -1,0 +1,79 @@
+.shop {
+  
+    max-width:auto;
+    margin-bottom: 0px;
+    margin: 0px auto;
+    margin-left:40px;
+    padding: 5px;
+    background-color: #e7e4e4;
+    border:1px solid #ccc;
+    border-radius: 0px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles for the shop title */
+.shopTitle {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.shopTitle h2 {
+    font-size: 2rem;
+    color: #333;
+}
+
+/* Styles for the products container */
+.products {
+    margin-left:0%;
+   background-color:#e7e4e4;
+   width: 100%;
+
+    
+}
+
+/* Styles for individual product */
+.product {
+    display: block;
+    width: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.product:hover {
+    transform: translateY(-5px);
+}
+
+/* Styles for product image */
+.product img {
+    width: 100%;
+    border-radius: 8px;
+    display: block;
+    margin-left: 10px;
+}
+
+.products p{
+    margin-left: 10px;
+     font-size:15px;
+}
+/* Styles for product description */
+.description {
+    padding: 10px;
+    text-align: center;
+}
+
+.description p {
+    margin: 0px 0px;
+    color: blueviolet;
+}
+
+.description b {
+    font-size: 1.3rem;
+    color: black;
+}
+.home Button{
+   margin-left:4%;
+}
