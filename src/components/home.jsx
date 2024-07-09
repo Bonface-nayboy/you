@@ -5,6 +5,9 @@ import Searchbar from './searchbar';
 import { Category, ChildCareRounded, Laptop, ManOutlined, People, PlaylistAdd, Woman } from '@mui/icons-material';
 import { ShopContext } from '../context/shop-context';
 import "./add.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Home = () => {
   const [category, setCategory] = useState('');
@@ -12,7 +15,7 @@ const Home = () => {
   const { addToCart } = useContext(ShopContext);
   const userName = localStorage.getItem('userName');
   const [formError, setFormError] = useState('');
-  const [openSnackbar, setOpenSnackbar] = useState(false); 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -20,8 +23,8 @@ const Home = () => {
       .then(response => {
         console.log('Order added successfully:', response.data);
         setFormError('');
-        setOpenSnackbar(true); 
-        fetchMaxOrderId(); 
+        setOpenSnackbar(true);
+        fetchMaxOrderId();
       })
       .catch((err) => {
         console.error('Error adding order:', err);
@@ -97,13 +100,13 @@ const Home = () => {
           Laptops
         </Button>
         <Button
-        startIcon={<ChildCareRounded/>}
-        variant="contained"
-        sx={{ margin: '0px 10px' }}
-        onClick={() => setCategory('Children')}
-      >
-        Children
-      </Button>
+          startIcon={<ChildCareRounded />}
+          variant="contained"
+          sx={{ margin: '0px 10px' }}
+          onClick={() => setCategory('Children')}
+        >
+          Children
+        </Button>
         <Button variant="outlined" sx={{ margin: '10px 50px', width: '100px' }} href="./add_products">
           <PlaylistAdd /> Add
         </Button>
@@ -112,16 +115,16 @@ const Home = () => {
 
         <Button type="submit" variant='contained' color='secondary'>Create order</Button>
         <TextField
-            variant='standard'
-            value={maxOrderId}
-          />
+          variant='standard'
+          value={maxOrderId}
+        />
       </form>
 
       <Snackbar
         open={openSnackbar}
-        autoHideDuration={6000} 
-        onClose={() => setOpenSnackbar(false)} 
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} 
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert onClose={() => setOpenSnackbar(false)} severity="success">
           Order successfully created. Order ID: {maxOrderId}
@@ -160,21 +163,25 @@ const Home = () => {
                     <Button
                       className="addCartBttn"
                       variant="contained"
-                      onClick={() =>{
-                        if (!maxOrderId){
-                          alert('failed create an order')
-                        } else{ 
-                        addToCart(product)}
+                      onClick={() => {
+                        if (!maxOrderId) {
+                          toast.error('Failed to create an order');
+                        } else {
+                          addToCart(product);
+                          toast.success('Item added to cart');
+                        }
                       }}
                     >
                       Add to Cart
                     </Button>
+
                   </Box>
                 </Grid>
               ))}
           </Grid>
         </Box>
       </Box>
+      <ToastContainer />
     </Box>
   );
 };

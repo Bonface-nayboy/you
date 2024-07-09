@@ -5,6 +5,8 @@ import { ChildCareRounded, Laptop, ManOutlined, People, PlaylistAdd, Woman } fro
 import "./shop.css";
 import { ShopContext } from '../../context/shop-context';
 import Searchbar from '../../components/searchbar';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Shop = () => {
@@ -12,7 +14,7 @@ const Shop = () => {
   const [products, setProducts] = useState([]);
   const { addToCart } = useContext(ShopContext);
   const userName = localStorage.getItem('userName');
-  const [openSnackbar, setOpenSnackbar] = useState(false); 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const [maxOrderId, setMaxOrderId] = useState('');
   const [formError, setFormError] = useState('');
@@ -38,14 +40,14 @@ const Shop = () => {
       .then(response => {
         console.log('Order added successfully:', response.data);
         setFormError('');
-        setOrderId(response.data.orderId); 
-        fetchMaxOrderId(); 
+        setOrderId(response.data.orderId);
+        fetchMaxOrderId();
         setOpenSnackbar(true);
-       
+
       })
       .catch(error => {
         console.error('Error adding order:', error);
-        setFormError('Failed to add order. Please try again later.'); 
+        setFormError('Failed to add order. Please try again later.');
       });
   };
 
@@ -62,7 +64,7 @@ const Shop = () => {
       setProducts(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
-    
+
     }
 
   };
@@ -71,77 +73,77 @@ const Shop = () => {
 
   return (
     <Box className="home">
-       <form onSubmit={handleFormSubmit}>
-       {formError && <div style={{ color: 'red' }}>{formError}</div>}
-      <Button
-        startIcon={<ManOutlined />}
-        variant="contained"
-        sx={{ margin: '10px 0px' }}
-        onClick={() => setCategory('Men')}
-      >
-        Men Collection
-      </Button>
-      <Button
-        startIcon={<Woman />}
-        variant="contained"
-        sx={{ margin: '0px 0px' }}
-        onClick={() => setCategory('Women')}
-      >
-        Women Collection
-      </Button>
-      <Button
-        startIcon={<People />}
-        variant="contained"
-        sx={{ margin: '0px 0px' }}
-        onClick={() => setCategory('Unisex')}
-      >
-        Unisex
-      </Button>
-      <Button
-        startIcon={<Laptop/>}
-        variant="contained"
-        sx={{ margin: '0px 10px' }}
-        onClick={() => setCategory('Laptop')}
-      >
-        Laptops
-      </Button>
-      <Button
-        startIcon={<ChildCareRounded/>}
-        variant="contained"
-        sx={{ margin: '0px 10px' }}
-        onClick={() => setCategory('Children')}
-      >
-        Children
-      </Button>
+      <form onSubmit={handleFormSubmit}>
+        {formError && <div style={{ color: 'red' }}>{formError}</div>}
+        <Button
+          startIcon={<ManOutlined />}
+          variant="contained"
+          sx={{ margin: '10px 0px' }}
+          onClick={() => setCategory('Men')}
+        >
+          Men Collection
+        </Button>
+        <Button
+          startIcon={<Woman />}
+          variant="contained"
+          sx={{ margin: '0px 0px' }}
+          onClick={() => setCategory('Women')}
+        >
+          Women Collection
+        </Button>
+        <Button
+          startIcon={<People />}
+          variant="contained"
+          sx={{ margin: '0px 0px' }}
+          onClick={() => setCategory('Unisex')}
+        >
+          Unisex
+        </Button>
+        <Button
+          startIcon={<Laptop />}
+          variant="contained"
+          sx={{ margin: '0px 10px' }}
+          onClick={() => setCategory('Laptop')}
+        >
+          Laptops
+        </Button>
+        <Button
+          startIcon={<ChildCareRounded />}
+          variant="contained"
+          sx={{ margin: '0px 10px' }}
+          onClick={() => setCategory('Children')}
+        >
+          Children
+        </Button>
 
-     
 
-          <Button type="submit" variant='contained' color='secondary'>Create order </Button>
-          <TextField
-            variant='standard'
-            value={maxOrderId}
-          />
-          
-        </form>
-        <Snackbar
+
+        <Button type="submit" variant='contained' color='secondary'>Create order </Button>
+        <TextField
+          variant='standard'
+          value={maxOrderId}
+        />
+
+      </form>
+      <Snackbar
         open={openSnackbar}
-        autoHideDuration={6000} 
-        onClose={() => setOpenSnackbar(false)} 
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} 
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert onClose={() => setOpenSnackbar(false)} severity="success">
           Order successfully created. Order ID: {maxOrderId}
         </Alert>
       </Snackbar>
 
-      
-    
 
 
-     
-      <Typography sx={{ fontSize: '30px',marginLeft:'70px'}}>
-   Welcome to our shop page  <mark> {userName}</mark>
-    </Typography>
+
+
+
+      <Typography sx={{ fontSize: '30px', marginLeft: '70px' }}>
+        Welcome to our shop page  <mark> {userName}</mark>
+      </Typography>
 
       <Box className="shop">
         <Box className="searchBar">
@@ -169,20 +171,19 @@ const Shop = () => {
                     <Typography variant="h6">{product.productName}</Typography>
                     <Typography variant="body1">Ksh {product.price}</Typography>
                     <Button
-                    className="addCartBttn"
-                    variant="contained"
-                    onClick={() => {
-                      if(!maxOrderId){
-                        alert("failed create an order")
-                        console.log('job',maxOrderId)
-                      } else{
-                        addToCart(product)}
-                      }
-                      }
-                   
-                  >
-                    Add to Cart
-                  </Button>
+                      className="addCartBttn"
+                      variant="contained"
+                      onClick={() => {
+                        if (!maxOrderId) {
+                          toast.error('Failed to create an order');
+                        } else {
+                          addToCart(product);
+                          toast.success('Item added to cart');
+                        }
+                      }}
+                    >
+                      Add to Cart
+                    </Button>
 
 
                   </Box>
@@ -191,6 +192,7 @@ const Shop = () => {
           </Grid>
         </Box>
       </Box>
+      <ToastContainer />
     </Box>
   );
 };

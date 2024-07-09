@@ -31,6 +31,12 @@ const AddProducts = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
+
+  const [orderId,setOrderId] = useState ('');
+  const [maxOrderId,setMaxOrderId] = useState('');
+
+
+
   useEffect(() => {
     fetchItems();
   }, []);
@@ -218,8 +224,15 @@ const AddProducts = () => {
               <Button
                 className="addToCartButton"
                 variant="contained"
-                onClick={() => addToCart(items[items.length - 1])}
                 style={{ marginTop: '10px', width: '40%' }}
+                onClick={() =>{ 
+                  if (!maxOrderId){
+                    alert('failed create an order')
+                  } else { 
+                  addToCart(items[items.length - 1])
+                }}
+                }
+                
               >
                 Add to Cart
               </Button>
