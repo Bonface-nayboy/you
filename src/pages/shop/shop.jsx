@@ -1,16 +1,56 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { Box, Typography, Button, Grid } from '@mui/material';
-import { Laptop, ManOutlined, People, PlaylistAdd, Woman } from '@mui/icons-material';
+import { Box, Typography, Button, Grid, Snackbar, Alert, TextField } from '@mui/material';
+import { ChildCareRounded, Laptop, ManOutlined, People, PlaylistAdd, Woman } from '@mui/icons-material';
 import "./shop.css";
 import { ShopContext } from '../../context/shop-context';
 import Searchbar from '../../components/searchbar';
+
 
 const Shop = () => {
   const [category, setCategory] = useState('');
   const [products, setProducts] = useState([]);
   const { addToCart } = useContext(ShopContext);
   const userName = localStorage.getItem('userName');
+  const [openSnackbar, setOpenSnackbar] = useState(false); 
+
+  const [maxOrderId, setMaxOrderId] = useState('');
+  const [formError, setFormError] = useState('');
+  const [orderId, setOrderId] = useState('');
+
+  useEffect(() => {
+    fetchMaxOrderId();
+  }, []);
+
+  const fetchMaxOrderId = () => {
+    axios.get('http://localhost:8084/orders')
+      .then(response => {
+        const maxId = response.data[0]['maxOrderId'];
+        setMaxOrderId(maxId);
+      })
+      .catch(error => console.error('Error fetching maximum Order ID:', error));
+  };
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+
+    axios.post('http://localhost:8084/orders', {})
+      .then(response => {
+        console.log('Order added successfully:', response.data);
+        setFormError('');
+        setOrderId(response.data.orderId); 
+        fetchMaxOrderId(); 
+        setOpenSnackbar(true);
+       
+      })
+      .catch(error => {
+        console.error('Error adding order:', error);
+        setFormError('Failed to add order. Please try again later.'); 
+      });
+  };
+
+
+
 
   useEffect(() => {
     fetchProducts();
@@ -22,12 +62,17 @@ const Shop = () => {
       setProducts(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
+    
     }
+
   };
+
 
 
   return (
     <Box className="home">
+       <form onSubmit={handleFormSubmit}>
+       {formError && <div style={{ color: 'red' }}>{formError}</div>}
       <Button
         startIcon={<ManOutlined />}
         variant="contained"
@@ -60,9 +105,42 @@ const Shop = () => {
       >
         Laptops
       </Button>
+      <Button
+        startIcon={<ChildCareRounded/>}
+        variant="contained"
+        sx={{ margin: '0px 10px' }}
+        onClick={() => setCategory('Children')}
+      >
+        Children
+      </Button>
+
+     
+
+          <Button type="submit" variant='contained' color='secondary'>Create order </Button>
+          <TextField
+            variant='standard'
+            value={maxOrderId}
+          />
+          
+        </form>
+        <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000} 
+        onClose={() => setOpenSnackbar(false)} 
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} 
+      >
+        <Alert onClose={() => setOpenSnackbar(false)} severity="success">
+          Order successfully created. Order ID: {maxOrderId}
+        </Alert>
+      </Snackbar>
+
+      
+    
+
+
      
       <Typography sx={{ fontSize: '30px',marginLeft:'70px'}}>
-      Classic Collection 
+   Welcome to our shop page  <mark> {userName}</mark>
     </Typography>
 
       <Box className="shop">
@@ -93,7 +171,14 @@ const Shop = () => {
                     <Button
                     className="addCartBttn"
                     variant="contained"
-                    onClick={() => addToCart(product)}
+                    onClick={() => {
+                      if(!maxOrderId){
+                        alert("failed create an order")
+                        console.log('job',maxOrderId)
+                      } else{
+                        addToCart(product)}
+                      }
+                      }
                    
                   >
                     Add to Cart

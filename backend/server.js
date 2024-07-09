@@ -12,6 +12,7 @@ const db = mysql.createConnection({
     password: '',
     database: 'logins'
 });
+this.logeeduser=""
 
 db.connect((err) => {
     if (err) {
@@ -37,24 +38,28 @@ app.post('/signup', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    const sql = "SELECT * FROM users WHERE email = ? AND password = ?";
-    const values = [email, password];
+  const { email, password } = req.body;
+  const sql = "SELECT * FROM users WHERE email = ? AND password = ?";
+  const values = [email, password];
 
-    db.query(sql, values, (err, results) => {
-        if (err) {
-            console.error('Error querying database: ' + err.stack);
-            return res.status(500).json({ error: 'Error logging in' });
-        }
-        if (results.length === 0) {
-            console.log('User not found or invalid credentials');
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
+  db.query(sql, values, (err, results) => {
+      if (err) {
+          console.error('Error querying database: ' + err.stack);
+          return res.status(500).json({ error: 'Error logging in' });
+      }
+      if (results.length === 0) {
+          console.log('User not found or invalid credentials');
+          return res.status(401).json({ error: 'Invalid credentials' });
+      }
 
-        console.log('User logged in successfully');
-        return res.status(200).json({ message: 'Logged in Successfully', name: results[0].name });
-    });
+      console.log('User logged in successfully');
+      this.logeeduser = results[0].name; // Assign the username to this.logeeduser
+     
+console.log(this.logeeduser)
+      return res.status(200).json({ message: 'Logged in Successfully', name: results[0].name });
+  });
 });
+
 
 
 
@@ -107,40 +112,39 @@ app.post('/newItems', (req, res) => {
     });
   });
 
-  
 
-
-  app.post('/add-update-newcart', (req, res) => {
+app.post('/add-update-newcart', (req, res) => {
     const { cartValues } = req.body;
-    console.log('cartValues',cartValues)
   
     if (!cartValues || !Array.isArray(cartValues)) {
       return res.status(400).json({ error: 'Invalid cart data' });
     }
+
+    const username = this.logeeduser;
+    console.log("user-name",username);
+
+
   
     let successfulOperations = [];
     let completedOperations = 0;
   
-    const sendSuccessResponse = () => {
+  
+
+    const checkCompleted = () => {
       completedOperations++;
       if (completedOperations === cartValues.length) {
-        res.status(200).json({
-          message: successfulOperations.length > 0
-            ? 'Items updated successfully'
-            : 'Items added successfully',
-        });
-      }
-      else{
-        res.status(400).json({
-          message: 'Items failed successfully'
-        });
+        if (successfulOperations.length > 0) {
+          res.status(200).json({ message: 'Items updated or added successfully' });
+        } else {
+          res.status(500).json({ error: 'Failed to update or add items to cart' });
+        }
       }
     };
-  console.log("ytrer",sendSuccessResponse())
+  
+    
     cartValues.forEach(item => {
       const {
-        username,
-        orderId,
+        
         productId,
         productName,
         productImage,
@@ -149,52 +153,67 @@ app.post('/newItems', (req, res) => {
         category,
       } = item;
   
-      // Check cart for existing entry
-      db.query(
-        'SELECT * FROM cart WHERE productId = ? AND username = ?',
-        [productId, username],
-        (err, result) => {
-          if (err) {
-            console.error('Error checking cart:', err);
-            console.log('result',result)
-            return res.status(500).json({ error: 'Error checking cart' });
-          }
-  
-          if (result.length > 0) {
-            // Update existing entry
-            db.query(
-              'UPDATE cart SET productQty = ? WHERE productId = ? AND username = ?',
-              [productQty, productId, username],
-              (err, updateResult) => {
-                if (err) {
-                  console.error('Error updating cart:', err);
-                  return res.status(500).json({ error: 'Error updating cart' });
-                }
-                successfulOperations.push(`Updated cart for product ID ${productId}`);
-                // sendSuccessResponse();
-              }
-            );
-          } else {
-            // Insert new entry
-            const sql = 'INSERT INTO cart (orderId, username, productId, productName, productImage, productQty, price, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-            const values = [orderId, username, productId, productName, productImage, productQty, price, category];
-            console.log('values',values)
-  
-            db.query(sql, values, (err, insertResult) => {
-              if (err) {
-                console.error('Error inserting into cart:', err);
-                return res.status(500).json({ error: 'Error inserting into cart' });
-              }
-              successfulOperations.push(`Added item to cart for product ID ${productId}`);
-              // sendSuccessResponse();
-            });
-          }
+
+      db.query('SELECT MAX(orderId) as maxOrderId FROM orders WHERE username = ? AND status=?',[this.logeeduser,"pending"], (err, maxOrderIdResult) => {
+        console.log("trewq",maxOrderIdResult);
+        this.logeeduser=username
+        if (err) {
+          console.error('Error fetching max orderId:', err);
+          return res.status(500).json({ error: 'Failed to fetch max orderId' });
         }
-      );
+  
+        let maxOrderId;
+        if (maxOrderIdResult.length > 0 && maxOrderIdResult[0].maxOrderId !== null) {
+         
+          maxOrderId = maxOrderIdResult[0].maxOrderId ;
+        } 
+       
+        
+       
+        db.query(
+          'SELECT * FROM cart WHERE productId = ? AND username = ?',
+          [productId, username],
+          (err, cartResult) => {
+            if (err) {
+              console.error('Error checking cart:', err);
+              return res.status(500).json({ error: 'Error checking cart' });
+            }
+  
+            if (cartResult.length > 0) {
+         
+              db.query(
+                'UPDATE cart SET productQty = ? WHERE productId = ? AND username = ?',
+                [productQty, productId, username],
+                (err, updateResult) => {
+                  if (err) {
+                    console.error('Error updating cart:', err);
+                    return res.status(500).json({ error: 'Error updating cart' });
+                  }
+                  successfulOperations.push(`Updated cart for product ID ${productId}`);
+                  checkCompleted();
+                }
+              );
+            } else {
+   
+              
+              const sql = 'INSERT INTO cart (orderId, username, productId, productName, productImage, productQty, price, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+              const values = [maxOrderId, username, productId, productName, productImage, productQty, price, category];
+    console.log("hey",maxOrderId)
+              db.query(sql, values, (err, insertResult) => {
+                if (err) {
+                  console.error('Error inserting into cart:', err);
+                  return res.status(500).json({ error: 'Error inserting into cart' });
+                }
+                successfulOperations.push(`Added item to cart for product ID ${productId}`);
+                checkCompleted();
+              });
+            }
+          }
+        );
+      });
     });
   });
   
-
 
 
 
@@ -215,6 +234,7 @@ app.put('/updateItem/:id', (req, res) => {
       }
     });
   });
+  
   
   
   app.delete('/deleteItem/:id', (req, res) => {
@@ -348,6 +368,53 @@ app.put('/stock/add/:id', (req, res) => {
           }
       });
   });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.get('/orders', (req, res) => {
+  const status ='pending';
+  db.query(`SELECT MAX(orderId) as maxOrderId FROM orders where status = ? AND username=?`, [status,this.logeeduser], (err, results) => {
+    console.log("twe",results)
+    if (err) {
+      console.error('Error fetching max orderId:', err);
+      return res.status(500).json({ error: 'Failed to fetch max orderId' });
+    }
+    res.status(200).json(results);
+  });
+});
+
+
+app.post('/orders', (req, res) => {
+  // For simplicity, we'll just insert a default order with minimum required fields
+  const defaultOrder = {
+    customerId: 1, // Assuming a default customerId
+    username:this.logeeduser,
+    totalAmount: 0, // Assuming a default totalAmount
+    status: 'pending'
+  };
+console.log("tttt",this.logeeduser)
+  db.query(
+    'INSERT INTO orders (customerId, username, total_amount, status) VALUES (?, ?, ?, ?)',
+    [defaultOrder.customerId, defaultOrder.username, defaultOrder.totalAmount, defaultOrder.status],
+    (err, result) => {
+      if (err) {
+        console.error('Error inserting order:', err);
+        return res.status(500).json({ error: 'Failed to add order. Please try again later.' });
+      }
+      res.status(201).json({ message: 'Order added successfully', orderId: result.insertId });
+    }
+  );
 });
 
 

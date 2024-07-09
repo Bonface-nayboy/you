@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ShopContext } from '../../context/shop-context';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -9,6 +9,29 @@ const Cart = () => {
   const totalAmount = getTotalCartAmount();
   const navigate = useNavigate();
   const userName = localStorage.getItem('userName');
+
+
+
+  const [maxOrderId, setMaxOrderId] = useState('');
+
+  useEffect(() => {
+    fetchMaxOrderId();
+  }, []);
+
+  const fetchMaxOrderId = () => {
+    axios.get('http://localhost:8084/orders')
+      .then(response => {
+        const maxId = response.data[0]['maxOrderId'];
+        setMaxOrderId(maxId);
+      })
+      .catch(error => console.error('Error fetching maximum Order ID:', error));
+  };
+
+
+
+
+
+
 
   const handleRemoveFromCart = (itemId) => {
     removeFromCart(itemId);
@@ -33,17 +56,22 @@ const Cart = () => {
   };
   const handleCheckout = () => {
     const username = localStorage.getItem('userName');
-
+    const orderId = localStorage.getItem('orderId');
+  
     if (!username) {
       alert('User information not available. Please login or sign up.');
       return;
     }
-
-    const orderNumber = generateOrderNumber();
-
+    if (!orderId) {
+      alert('User information not available. Please login or sign up.');
+      return;
+    }
+    
+  
+    // Proceed with checkout logic
     const newItems = cartItems.map((item) => ({
       username: username,
-      orderId: orderNumber,
+      orderId: maxOrderId,
       productId: item.id,
       productName: item.productName,
       productImage: item.productImage,
@@ -51,16 +79,14 @@ const Cart = () => {
       price: item.price,
       category: item.category,
     }));
-
+  
     axios
       .post('http://localhost:8084/add-update-newcart', { cartValues: newItems })
-      .then((response) => {        
-        const { data: {
-          message
-        } } = response
+      .then((response) => {
+        const { data: { message } } = response;
         console.log('Response from server:', message);
-        removeFromCart();
-        navigate('/');
+        removeFromCart(); 
+        navigate('/'); 
         alert('You have checked out successfully.');
       })
       .catch((err) => {
@@ -68,17 +94,9 @@ const Cart = () => {
         alert('Error during checkout. Please try again later.');
       });
   };
-
-
-  const generateOrderNumber = () => {
-
-    const timestamp = new Date().getTime();
-    const randomNumber = Math.floor(Math.random() * 1000);
-    return `${timestamp}-${randomNumber}`;
-  };
+  
 
   const handlePrintReceipt = () => {
-
     const receiptContent = `
       Receipt for ${userName}
       ---------------------------
@@ -87,7 +105,7 @@ const Cart = () => {
       ${cartItems.map((item) => `${item.productName} - Ksh ${item.price}`).join('\n')}
     `;
     alert(receiptContent);
-    navigate('/receipt');
+    navigate('/receipt'); 
   };
 
   return (
@@ -96,7 +114,7 @@ const Cart = () => {
         <Typography variant="body1">Your cart is empty.</Typography>
       ) : (
         <div>
-          <Typography variant="h6">Welcome To Our Shopping Cart, <mark>{userName}</mark></Typography>
+          <Typography variant="h6">Welcome To Our Shopping Cart, <mark>{userName}</mark>  order No: <mark>{maxOrderId}</mark> </Typography>
           {cartItems.map((item) => (
             <Card
               key={item.id}
@@ -180,4 +198,5 @@ const Cart = () => {
 };
 
 export default Cart;
+
 
